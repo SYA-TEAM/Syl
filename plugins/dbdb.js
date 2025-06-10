@@ -57,6 +57,6 @@ _Enviando audio un momento soy lenta (˶˃ ᵕ ˂˶)..._
   }
 };
 
-handler.command = ['play','mp3','ytmp3','playmp3'];
+handler.command = ['play1'];
 
 export default handler;
