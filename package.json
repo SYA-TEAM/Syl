@@ -64,7 +64,7 @@
     "human-readable": "^0.2.1",
     "instagram-url-direct": "^1.0.20",
     "javascript-obfuscator": "^4.1.1",
-    "jimp": "^0.1",
+    "jimp": "^0.22.12",
     "jsdom": "^20.0.1",
     "link-preview-js": "^3.0.0",
     "lodash": "^4.17.21",
