@@ -44,10 +44,13 @@ Por favor espera unos segundos.`, m, { ...rcanal });
     const data = await fetchMayCode(text.trim());
 
     const respuestaTexto = `
-📄 *Resultado generado por MayCode*
+> 📄 *Resultado generado por MayCode*
 
 👤 *Tu solicitud:* ${data.user || text}
-💬 *Explicación:* ${data.MayCode || 'No se generó una explicación.'}
+
+
+💬 *Maycode Responde:* ${data.MayCode || 'No se generó una explicación.'}
+
 
 💻 *Código generado a continuación...*
 
