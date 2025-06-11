@@ -22,7 +22,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   }
 
   // Formar el texto del menú
-  let cap = `${estadoBot}\n\n⊂(◉‿◉)つ ¡Hola ${nombre}!\n> Aquí tienes el menú:\n\n`;
+  let cap = `${estadoBot}\n\n❀ *Tiempo activa:* ${rTime(uptime)}\n\n⊂(◉‿◉)つ ¡Hola ${nombre}!\n> Aquí tienes el menú:\n\n`;
 
   for (let tag in groups) {
     cap += `✿ *${tag.toUpperCase()}*\n`;
