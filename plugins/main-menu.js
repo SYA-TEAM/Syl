@@ -14,7 +14,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     let h = Math.floor(ms / 3600000);
     let m = Math.floor(ms % 3600000 / 60000);
     let s = Math.floor(ms % 60000 / 1000);
-    return `${h}h ${m}m ${s}s`;
+    return `${h} Horas ${m} Minutos ${s} Segundos`;
   }
 
   // Detectar si es el bot principal o un sub bot
@@ -36,7 +36,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   let cap = `${estadoBot}\n\n❀ *Tiempo activa:* ${rTime(uptime)}\n\n⊂(◉‿◉)つ ¡Hola ${nombre}!\n> Aquí tienes el menú:\n\n`;
 
   for (let tag in groups) {
-    cap += `✿ *${tag.toUpperCase()}*\n`;
+    cap += `✧ *${tag.toUpperCase()}*\n`;
     for (let cmds of groups[tag]) {
       for (let cmd of cmds) {
         cap += `• ${usedPrefix}${cmd}\n`;
@@ -81,7 +81,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
       ...global.rcanal?.contextInfo,
       externalAdReply: {
         title: `Menu solicitado por ${nombre}`,
-        body: `🤍 Comandos actualizados 🛠️`,
+        body: `🤍 Menu Completo 🛠️`,
         thumbnail: adreplyImage,
         mediaType: 1,
         renderLargerThumbnail: true,
