@@ -25,31 +25,34 @@ const handler = async (m, { conn, text }) => {
     return conn.reply(m.chat,
 `📌 *Uso correcto del comando: .maycode*
 
-Escribe tu solicitud o pregunta relacionada con código.
+🔹 Escribe tu pregunta o solicitud relacionada con código.
+🔹 Recibirás una explicación y un ejemplo generado automáticamente.
 
-Ejemplo:
+✏️ *Ejemplo:*
 .maycode ¿Cómo crear un input con bordes redondeados en HTML?
 
-Modelo actual: *MayCode v2*`, m, { ...rcanal });
+🧠 Modelo en uso: *MayCode v2*`, m, { ...rcanal });
   }
 
   await conn.reply(m.chat,
-`🔄 *Procesando tu solicitud...*
-Modelo: MayCode v2
+`⏳ *Generando respuesta...*
 
-Por favor, espera un momento mientras se genera la respuesta.`, m, { ...rcanal });
+📡 Consultando modelo *MayCode v2*...
+Por favor espera unos segundos.`, m, { ...rcanal });
 
   try {
     const data = await fetchMayCode(text.trim());
 
     const respuestaTexto = `
-📎 *Resultado generado por MayCode*
+📄 *Resultado generado por MayCode*
 
-🧑 Pregunta: ${data.user || text}
-⚔️ Respuesta: ${data.MayCode || 'No se generó una explicación.'}
+👤 *Tu solicitud:* ${data.user || text}
+💬 *Explicación:* ${data.MayCode || 'No se generó una explicación.'}
 
-A continuación, se presenta el bloque de código generado.
-Fuente: *NightAPI – Desarrollado por SoyMaycol*
+💻 *Código generado a continuación...*
+
+🧩 Fuente: *NightAPI*
+👨‍💻 Desarrollado por *SoyMaycol*
     `.trim();
 
     const codigo = data.code?.trim() || '// No se generó ningún código.';
@@ -60,11 +63,11 @@ Fuente: *NightAPI – Desarrollado por SoyMaycol*
   } catch (e) {
     console.error(e);
     await conn.reply(m.chat,
-`❌ *Error al obtener respuesta de MayCode*
+`🚫 *Error al obtener una respuesta de MayCode*
 
-Actualmente, todas las instancias están fuera de servicio.
+🔒 Actualmente, todas las instancias de la API están fuera de servicio.
 
-Te sugerimos intentarlo nuevamente más tarde.`, m, { ...rcanal });
+🕐 Intenta nuevamente más tarde.`, m, { ...rcanal });
   }
 };
 
