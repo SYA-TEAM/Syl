@@ -17,56 +17,54 @@ async function fetchMayCode(prompt) {
       console.warn(`[Error] ${base} → ${err.message}`);
     }
   }
-  throw new Error('Todas las instancias están fuera de servicio.');
+  throw new Error('Todas las instancias de la API están fuera de servicio.');
 }
 
 const handler = async (m, { conn, text }) => {
   if (!text) {
-    return conn.reply(m.chat, 
-`⚠️ *Uso correcto de MayCode:*
+    return conn.reply(m.chat,
+`📌 *Uso correcto del comando: .maycode*
 
-.maycode [tu pregunta o solicitud de código]
+Escribe tu solicitud o pregunta relacionada con código.
 
-📌 Ejemplo:
-.maycode ¿Cómo creo un input con bordes redondeados en HTML?
+Ejemplo:
+.maycode ¿Cómo crear un input con bordes redondeados en HTML?
 
-🔧 Modelo: MayCode v2`, m);
+Modelo actual: *MayCode v2*`, m, { ...rcanal });
   }
 
-  await conn.reply(m.chat, 
-`🔍 *Generando respuesta...*
-⏳ Modelo: MayCode v2
-Espera un momento por favor...`, m);
+  await conn.reply(m.chat,
+`🔄 *Procesando tu solicitud...*
+Modelo: MayCode v2
+
+Por favor, espera un momento mientras se genera la respuesta.`, m, { ...rcanal });
 
   try {
     const data = await fetchMayCode(text.trim());
 
     const respuestaTexto = `
-📌 *MayCode — Resultado*
+📎 *Resultado generado por MayCode*
 
-🗨️ *Tú:* ${data.user || text}
-🤠 *MayCode:* ${data.MayCode || 'No se generó una explicación'}
+🧑 Pregunta: ${data.user || text}
+⚔️ Respuesta: ${data.MayCode || 'No se generó una explicación.'}
 
-💻 *Código a continuación...*
-🌐 Powered by NightAPI — Dev *SoyMaycol*
+A continuación, se presenta el bloque de código generado.
+Fuente: *NightAPI – Desarrollado por SoyMaycol*
     `.trim();
 
-    const codigo = data.code?.trim() || '// Sin código generado';
+    const codigo = data.code?.trim() || '// No se generó ningún código.';
 
-    // Enviar explicación primero
-    await conn.sendMessage(m.chat, { text: respuestaTexto }, { quoted: m });
-
-    // Enviar código como mensaje aparte
-    await conn.sendMessage(m.chat, { text: '```' + codigo + '```' }, { quoted: m });
+    await conn.sendMessage(m.chat, { text: respuestaTexto }, { quoted: m, ...rcanal });
+    await conn.sendMessage(m.chat, { text: codigo }, { quoted: m, ...rcanal });
 
   } catch (e) {
     console.error(e);
-    await conn.reply(m.chat, 
-`❌ *Error de conexión con MayCode*
+    await conn.reply(m.chat,
+`❌ *Error al obtener respuesta de MayCode*
 
-Todas las instancias están fuera de servicio por ahora.
+Actualmente, todas las instancias están fuera de servicio.
 
-Por favor, intenta nuevamente más tarde.`, m);
+Te sugerimos intentarlo nuevamente más tarde.`, m, { ...rcanal });
   }
 };
 
