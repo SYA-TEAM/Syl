@@ -6,8 +6,19 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   let nombre = await conn.getName(m.sender);
   let fileName = `✦ ʏᴜʀᴜ ʏᴜʀɪ ✧`;
 
+  // Definir uptime
+  const uptime = process.uptime() * 1000;
+
+  // Función para convertir el tiempo a formato legible
+  function rTime(ms) {
+    let h = Math.floor(ms / 3600000);
+    let m = Math.floor(ms % 3600000 / 60000);
+    let s = Math.floor(ms % 60000 / 1000);
+    return `${h}h ${m}m ${s}s`;
+  }
+
   // Detectar si es el bot principal o un sub bot
-  let mainBotNumber = '50493059810@s.whatsapp.net'; // <-- Número del bot principal (ajusta según sea necesario)
+  let mainBotNumber = '50493059810@s.whatsapp.net'; // <-- Número del bot principal
   let esPrincipal = conn.user.jid === mainBotNumber;
   let estadoBot = esPrincipal ? '\`✧ Bot:\` *Principal*' : '\`✧ Bot:\` *Sub Bot*';
 
@@ -34,10 +45,10 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     cap += `\n`;
   }
 
-  // Imagen del documento
+  // Leer imagen del menú
   let localImageBuffer = await fs.readFile("./src/menu.jpg");
 
-  // Miniatura del documento
+  // Crear miniatura
   let miniThumbnail = await sharp(localImageBuffer)
     .resize(200, 200)
     .jpeg({ quality: 70 })
@@ -46,6 +57,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   // Imagen para el adReply
   let adreplyImage = miniThumbnail;
 
+  // Intentar usar imagen generada por API (opcional)
   try {
     const apiURL = `https://nightapi.is-a.dev/api/mayeditor?url=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAoH2L-_2H07icZqJWQ-1wJZRYXTAmlDJlgbcrYaoIswQsuR6M61b30JU&s=10&texto=¡Hola%20${encodeURIComponent(nombre)}!&textodireccion=Centro&fontsize=70`;
     const res = await fetch(apiURL);
@@ -58,7 +70,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     console.warn("⚠️ Error al obtener miniatura de la API, usando fallback");
   }
 
-  // Enviar el documento como menú
+  // Enviar documento con menú
   await conn.sendMessage(m.chat, {
     document: localImageBuffer,
     mimetype: "image/jpeg",
@@ -66,14 +78,14 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     caption: cap,
     jpegThumbnail: miniThumbnail,
     contextInfo: {
-      ...global.rcanal.contextInfo,
+      ...global.rcanal?.contextInfo,
       externalAdReply: {
         title: `Menu solicitado por ${nombre}`,
         body: `🤍 Comandos actualizados 🛠️`,
         thumbnail: adreplyImage,
         mediaType: 1,
         renderLargerThumbnail: true,
-        sourceUrl: "https://github.com", // tu link aquí
+        sourceUrl: "https://github.com", // ← cambia esto por tu enlace real
       },
     },
   }, { quoted: m });
