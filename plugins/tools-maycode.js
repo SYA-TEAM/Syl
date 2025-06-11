@@ -34,23 +34,16 @@ const handler = async (m, { conn, text }) => {
 🧠 Modelo en uso: *MayCode v2*`, m, { ...rcanal });
   }
 
-  await conn.reply(m.chat,
-`⏳ *Generando respuesta...*
-
-📡 Consultando modelo *MayCode v2*...
-Por favor espera unos segundos.`, m, { ...rcanal });
+  await conn.react(m.chat, '🕒', m);
 
   try {
     const data = await fetchMayCode(text.trim());
 
     const respuestaTexto = `
-> 📄 *Resultado generado por MayCode*
+📄 *Resultado generado por MayCode*
 
 👤 *Tu solicitud:* ${data.user || text}
-
-
-💬 *Maycode Responde:* ${data.MayCode || 'No se generó una explicación.'}
-
+💬 *Explicación:* ${data.MayCode || 'No se generó una explicación.'}
 
 💻 *Código generado a continuación...*
 
@@ -62,6 +55,8 @@ Por favor espera unos segundos.`, m, { ...rcanal });
 
     await conn.sendMessage(m.chat, { text: respuestaTexto }, { quoted: m, ...rcanal });
     await conn.sendMessage(m.chat, { text: codigo }, { quoted: m, ...rcanal });
+
+    await conn.react(m.chat, '✅', m);
 
   } catch (e) {
     console.error(e);
