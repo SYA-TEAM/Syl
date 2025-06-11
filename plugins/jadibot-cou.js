@@ -192,7 +192,7 @@ let handler = async (m, { conn: _conn, args, usedPrefix, command }) => {
 
 handler.help = ['code'];
 handler.command = ['cou', 'code'];
-handler.tags = ['code']
+handler.tags = ['serbot']
 handler.rowner = false;
 
 export default handler;
