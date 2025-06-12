@@ -1,48 +1,41 @@
 import fetch from 'node-fetch';
-import yts from 'yt-search';
 
-const youtubeRegexID = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/
-
-const handler = async (m, { conn, text, command }) => {
-  try {
-    if (!text.trim()) {
-      return conn.reply(m.chat, `
-❒ ლ *Uso del comando ${command}*
-> ✦ Ingresa el nombre o enlace de un video de YouTube.
+let handler = async (m, { conn, usedPrefix, command, text }) => {
+  if (!text) {
+    return m.reply(`
+╭─❒✦✿ *USO DEL COMANDO ${command}* ✿✦❒─╮
+> ✿ Ingresa el nombre de una canción o un enlace de YouTube.
 > ❀ Ejemplo:
-> ${command} unstoppable
-      `.trim(), m)
+> ${usedPrefix + command} shakira
+╰─☄︎──────────────☄︎─╯
+`.trim())
+  }
+
+  try {
+    await conn.sendMessage(m.chat, { react: { text: "❀", key: m.key } })
+
+    const searchApi = `https://delirius-apiofc.vercel.app/search/ytsearch?q=${text}`;
+    const searchResponse = await fetch(searchApi);
+    const searchData = await searchResponse.json();
+
+    if (!searchData?.data || searchData.data.length === 0) {
+      return m.reply(`✦ No se encontraron resultados para: *${text}*`);
     }
 
-    // Reacción inicial
-    await conn.sendMessage(m.chat, { react: { text: "❀", key: m.key } });
+    const video = searchData.data[0]; // Primer resultado
+    const { title, author, duration, views, publishedAt, url, image } = video
 
-    let videoIdMatch = text.match(youtubeRegexID);
-    let ytData = await yts(videoIdMatch ? `https://youtu.be/${videoIdMatch[1]}` : text);
+    await conn.sendMessage(m.chat, { react: { text: "✦", key: m.key } })
 
-    let video = videoIdMatch
-      ? ytData.videos.find(v => v.videoId === videoIdMatch[1])
-      : ytData.videos?.[0];
-
-    if (!video) return m.reply('✧ No se encontró ningún video.');
-
-    const { title, thumbnail, timestamp, views, ago, url, author } = video;
-    const canal = author?.name || 'Desconocido';
-    const vistas = formatViews(views);
-
-    // Reacción éxito
-    await conn.sendMessage(m.chat, { react: { text: "✦", key: m.key } });
-
-    // Mensaje decorado
     await conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
+      image: { url: image },
       caption: `
 ╭─❒✦✿ *DETALLES DEL VIDEO* ✿✦❒─╮
 > ✿ *Título:* ${title}
-> ❀ *Canal:* ${canal}
-> ლ *Duración:* ${timestamp}
-> ✦ *Publicado:* ${ago}
-> ❒ *Vistas:* ${vistas}
+> ❀ *Canal:* ${author.name}
+> ლ *Duración:* ${duration}
+> ✦ *Publicado:* ${publishedAt}
+> ❒ *Vistas:* ${formatViews(views)}
 > ☄︎ *Enlace:* ${url}
 ╰─☄︎──────────────☄︎─╯
 
@@ -50,47 +43,46 @@ const handler = async (m, { conn, text, command }) => {
 `.trim()
     }, { quoted: m });
 
-    // Descargar y enviar audio
-    const api = await (await fetch(`https://api.vreden.my.id/api/ytmp3?url=${encodeURIComponent(url)}`)).json();
-    const audioUrl = api?.result?.url;
+    const downloadApi = `https://api.vreden.my.id/api/ytmp3?url=${url}`;
+    const downloadResponse = await fetch(downloadApi);
+    const downloadData = await downloadResponse.json();
 
+    const audioUrl = downloadData?.result?.download?.url;
     if (!audioUrl) {
       return m.reply(`
-❀✿ *Error*
-> ✦ No se pudo obtener el audio.
-> ლ Intenta con otro video o revisa el enlace.
+✖︎ No se pudo obtener el audio del video.
+> ლ Intenta con otro título o enlace.
 `.trim());
     }
 
     await conn.sendMessage(m.chat, {
       audio: { url: audioUrl },
       mimetype: 'audio/mpeg',
-      fileName: `${api.result.title}.mp3`,
+      fileName: `${title}.mp3`,
       ptt: false
     }, { quoted: m });
 
-  } catch (e) {
-    console.error(e);
-    await conn.sendMessage(m.chat, { react: { text: "🪬", key: m.key } });
-    return m.reply(`
-❀✿ *Error*
-> ✦ No se pudo procesar tu solicitud.
-> ლ Intenta con otro nombre o verifica el enlace.
-`.trim());
+    await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } });
+
+  } catch (error) {
+    console.error(error)
+    await conn.sendMessage(m.chat, { react: { text: "🪬", key: m.key } })
+    m.reply(`
+✖︎ *Error inesperado*
+> ✦ No se pudo completar la solicitud.
+> ლ Detalles: ${error.message}
+`.trim())
   }
 };
 
-handler.command = ['play1'];
-handler.tags = ['descargas'];
-handler.help = ['play'];
-handler.group = false;
+handler.command = ['play1', 'playaudio'];
 
 export default handler;
 
 function formatViews(views) {
-  if (!views) return "No disponible";
-  if (views >= 1_000_000_000) return `${(views / 1_000_000_000).toFixed(1)}B`;
-  if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1)}M`;
-  if (views >= 1_000) return `${(views / 1_000).toFixed(1)}k`;
-  return views.toString();
+  if (!views) return "No disponible"
+  if (views >= 1_000_000_000) return `${(views / 1_000_000_000).toFixed(1)}B`
+  if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1)}M`
+  if (views >= 1_000) return `${(views / 1_000).toFixed(1)}k`
+  return views.toString()
 }
