@@ -7,7 +7,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 > ╭─❒✦✿ *USO* ✿✦❒─╮
 > ✿ Ingresa el nombre de una canción o un enlace de YouTube.
 > ❀ Ejemplo:
-> ${usedPrefix + command} shakira
+> ${usedPrefix + command} con calma
 > ╰─☄︎──────────────☄︎─╯
 `.trim())
   }
