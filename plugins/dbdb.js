@@ -64,9 +64,9 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 
   } catch (error) {
     console.error(error)
-    await conn.sendMessage(m.chat, { react: { text: "🪬", key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: "✖️", key: m.key } })
     m.reply(`
-✖︎ *Error inesperado*
+✖︎ *Ocurrió un error :v*
 > ✦ No se pudo completar la solicitud.
 > ლ Detalles: ${error.message}
 `.trim())
