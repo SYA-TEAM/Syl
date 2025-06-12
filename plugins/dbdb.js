@@ -80,7 +80,7 @@ const handler = async (m, { conn, text, command }) => {
   }
 };
 
-handler.command = ['play', 'yta', 'ytmp3', 'playaudio'];
+handler.command = ['play1'];
 handler.tags = ['descargas'];
 handler.help = ['play'];
 handler.group = false;
