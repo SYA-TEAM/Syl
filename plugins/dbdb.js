@@ -1,3 +1,4 @@
+//Code Oficial De Yuru Yuri 👻
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, usedPrefix, command, text }) => {
@@ -37,10 +38,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 > ✦ *Publicado:* ${publishedAt}
 > ❒ *Vistas:* ${formatViews(views)}
 > ☄︎ *Enlace:* ${url}
-> ╰─☄︎─────────────☄︎─╯
-
-> ❒✦ *Enviando audio...*
-`.trim()
+> ╰─☄︎─────────────☄︎─╯`.trim()
     }, { quoted: m });
 
     const downloadApi = `https://api.vreden.my.id/api/ytmp3?url=${url}`;
@@ -75,7 +73,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
   }
 };
 
-handler.command = ['play1', 'playaudio'];
+handler.command = ['play', 'playaudio'];
 
 export default handler;
 
