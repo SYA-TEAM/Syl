@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
-const buscarYT = async (query) => {
+const buscarEnYouTube = async (query) => {
   const res = await fetch(`https://delirius-apiofc.vercel.app/search/ytsearch?q=${encodeURIComponent(query)}`);
   const json = await res.json();
-  if (!json.status || !json.result || !json.result[0]) throw '✿ No se encontró el video.';
+  if (!json.status || !json.result || !json.result[0]) throw '❀ No se encontró ningún resultado.';
   return json.result[0].url;
 };
 
@@ -13,29 +13,27 @@ const handler = async (m, { conn, text, command }) => {
 > ✦ Ingresa el nombre o enlace de un video de YouTube.
 > ❀ Ejemplo:
 > ${command} Another Love
-> ${command} https://youtu.be/abcdef
+> ${command} https://youtu.be/abcd1234
   `.trim();
 
-  // Reacción inicial ✦
-  await conn.sendMessage(m.chat, { react: { text: "⛓️‍💥", key: m.key } });
+  await conn.sendMessage(m.chat, { react: { text: "✿", key: m.key } });
 
   try {
-    let linkYT = text;
-    if (!text.includes('youtube.com') && !text.includes('youtu.be')) {
-      // Buscar con Delirius API
-      linkYT = await buscarYT(text);
+    // Si es texto, buscar en YouTube
+    let videoUrl = text;
+    if (!text.includes('youtu.be') && !text.includes('youtube.com')) {
+      videoUrl = await buscarEnYouTube(text);
     }
 
-    const res = await fetch(`https://api.vreden.my.id/api/ytmp3?url=${encodeURIComponent(linkYT)}`);
+    const res = await fetch(`https://api.vreden.my.id/api/ytmp3?url=${encodeURIComponent(videoUrl)}`);
     const json = await res.json();
-    if (!json.status || !json.result || !json.result.url) throw '❀ No se pudo obtener el audio.';
+
+    if (!json || !json.result || !json.result.url) throw '❀ No se pudo obtener el audio.';
 
     const { title, channel, duration, thumb, size, quality, url } = json.result;
 
-    // Reacción de éxito ☄︎
-    await conn.sendMessage(m.chat, { react: { text: "🐦‍🔥", key: m.key } });
+    await conn.sendMessage(m.chat, { react: { text: "☄︎", key: m.key } });
 
-    // Enviar detalles
     await conn.sendMessage(m.chat, {
       image: { url: thumb },
       caption: `
@@ -51,7 +49,6 @@ const handler = async (m, { conn, text, command }) => {
 `.trim()
     }, { quoted: m });
 
-    // Enviar el audio sin contextInfo
     await conn.sendMessage(m.chat, {
       audio: { url },
       mimetype: 'audio/mpeg',
@@ -59,7 +56,7 @@ const handler = async (m, { conn, text, command }) => {
     }, { quoted: m });
 
   } catch (e) {
-    console.error(e);
+    console.error('[❌ ERROR]', e);
     await conn.sendMessage(m.chat, { react: { text: "🪬", key: m.key } });
     m.reply(`
 ❀✿ *Error*
@@ -70,6 +67,6 @@ const handler = async (m, { conn, text, command }) => {
 };
 
 handler.command = ['play1'];
-handler.help = ['play1 <nombre o enlace>'];
+handler.help = ['play1 <nombre o enlace']
 
 export default handler;
