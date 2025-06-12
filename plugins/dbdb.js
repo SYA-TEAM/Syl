@@ -71,7 +71,5 @@ const handler = async (m, { conn, text, command }) => {
 
 handler.command = ['play1'];
 handler.help = ['play1 <nombre o enlace>'];
-handler.tags = ['descargas'];
-handler.register = true;
 
 export default handler;
