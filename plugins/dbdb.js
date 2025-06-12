@@ -1,62 +1,64 @@
+// Archivo: plugins/playvreden2.js
 import fetch from 'node-fetch';
 
-// Las URLs están codificadas en base64
-const ENCRYPTED_SEARCH_API = 'aHR0cDovLzE3My4yMDguMjAwLjIyNzozMjY5L3NlYXJjaF95b3V0dWJlP3F1ZXJ5PQ==';
-const ENCRYPTED_DOWNLOAD_API = 'aHR0cDovLzE3My4yMDguMjAwLjIyNzozMjY5L2Rvd25sb2FkX2F1ZGlvP3VybD0=';
+const handler = async (m, { conn, text, command }) => {
+  if (!text) throw `
+❒ ლ *Uso del comando ${command}*
+> ✦ Ingresa el nombre o enlace de un video de YouTube.
+> ☄︎ Ejemplo:
+> ${command} Unstoppable
+  `.trim();
 
-// Función para desencriptar
-function decryptBase64(str) {
-  return Buffer.from(str, 'base64').toString();
-}
-
-let handler = async (m, { text, conn, command }) => {
-  if (!text) return m.reply('🔍 Ingresa el nombre de una canción. Ej: *.play Aishite Ado*');
+  // Reacción inicial 💫
+  await conn.sendMessage(m.chat, { react: { text: "🐦‍🔥", key: m.key } });
 
   try {
-    const searchAPI = decryptBase64(ENCRYPTED_SEARCH_API);
-    const downloadAPI = decryptBase64(ENCRYPTED_DOWNLOAD_API);
+    const res = await fetch(`https://api.vreden.my.id/api/ytmp3?url=${encodeURIComponent(text)}`);
+    const json = await res.json();
 
-    const searchRes = await fetch(`${searchAPI}${encodeURIComponent(text)}`);
-    const searchJson = await searchRes.json();
-
-    if (!searchJson.results || !searchJson.results.length) {
-      return m.reply('⚠️ No se encontraron resultados.');
+    if (!json.status || !json.result || !json.result.url) {
+      throw '❀ No se pudo obtener el audio. Verifica el enlace.';
     }
 
-    const video = searchJson.results[0];
-    const thumb = video.thumbnails.find(t => t.width === 720)?.url || video.thumbnails[0]?.url;
-    const videoTitle = video.title;
-    const videoUrl = video.url;
-    const duration = Math.floor(video.duration);
+    const { title, channel, duration, thumb, size, quality, url } = json.result;
 
-    const msgInfo = `
-🎵 *Título:* ${videoTitle}
-📺 *Canal:* ${video.channel}
-⏱️ *Duración:* ${duration}s
-👀 *Vistas:* ${video.views.toLocaleString()}
-🔗 *URL:* ${videoUrl}
-_Enviando audio un momento soy lenta (˶˃ ᵕ ˂˶)..._
-`.trim();
+    // Reacción de éxito ☄︎
+    await conn.sendMessage(m.chat, { react: { text: "☄︎", key: m.key } });
 
-    await conn.sendMessage(m.chat, { image: { url: thumb }, caption: msgInfo }, { quoted: m });
-
-    const downloadRes = await fetch(`${downloadAPI}${encodeURIComponent(videoUrl)}`);
-    const downloadJson = await downloadRes.json();
-
-    if (!downloadJson.file_url) return m.reply('❌ No se pudo descargar el audio.');
-
+    // Mensaje con detalles decorado
     await conn.sendMessage(m.chat, {
-      audio: { url: downloadJson.file_url },
-      mimetype: 'audio/mp4',
-      fileName: `${downloadJson.title}.mp3`
+      image: { url: thumb },
+      caption: `
+╭─❒✦✿ *DETALLES* ✿✦❒─╮
+> ✿ *Título:* ${title}
+> ❀ *Canal:* ${channel}
+> ლ *Duración:* ${duration}
+> ✦ *Calidad:* ${quality}
+> ❒ *Tamaño:* ${size}
+╰─☄︎───────────────☄︎─╯
+
+> ❒✦ *Enviando audio...*
+`.trim()
+    }, { quoted: m });
+
+    // Enviar el audio limpio
+    await conn.sendMessage(m.chat, {
+      audio: { url },
+      mimetype: 'audio/mpeg',
+      ptt: false
     }, { quoted: m });
 
   } catch (e) {
     console.error(e);
-    m.reply('❌ Error al procesar tu solicitud.');
+    await conn.sendMessage(m.chat, { react: { text: "🪬", key: m.key } });
+    m.reply(`
+❀✿ *Error*
+> ✦ No se pudo procesar tu solicitud.
+> ლ Verifica que el video exista o intenta más tarde.
+`.trim());
   }
 };
 
-handler.command = ['play1'];
+handler.command = ['play1']
 
 export default handler;
