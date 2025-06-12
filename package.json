@@ -40,7 +40,7 @@
     "@google/generative-ai": "^0.24.1",
     "@green-code/music-track-data": "^2.0.3",
     "@octokit/rest": "^21.1.1",
-    "@whiskeysockets/baileys": "github:Ado926/MikiBai",
+    "@whiskeysockets/baileys": "github:Ado926/x",
     "acrcloud": "^1.4.0",
     "api-dylux": "^1.8.5",
     "senna-fg": "0.0.9",
