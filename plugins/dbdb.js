@@ -17,7 +17,7 @@ const handler = async (m, { conn, text, command }) => {
   `.trim();
 
   // Reacción inicial ✦
-  await conn.sendMessage(m.chat, { react: { text: "✿", key: m.key } });
+  await conn.sendMessage(m.chat, { react: { text: "⛓️‍💥", key: m.key } });
 
   try {
     let linkYT = text;
@@ -33,7 +33,7 @@ const handler = async (m, { conn, text, command }) => {
     const { title, channel, duration, thumb, size, quality, url } = json.result;
 
     // Reacción de éxito ☄︎
-    await conn.sendMessage(m.chat, { react: { text: "☄︎", key: m.key } });
+    await conn.sendMessage(m.chat, { react: { text: "🐦‍🔥", key: m.key } });
 
     // Enviar detalles
     await conn.sendMessage(m.chat, {
