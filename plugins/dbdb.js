@@ -3,16 +3,16 @@ import fetch from 'node-fetch';
 let handler = async (m, { conn, usedPrefix, command, text }) => {
   if (!text) {
     return m.reply(`
-╭─❒✦✿ *USO DEL COMANDO ${command}* ✿✦❒─╮
+> ╭─❒✦✿ *USO* ✿✦❒─╮
 > ✿ Ingresa el nombre de una canción o un enlace de YouTube.
 > ❀ Ejemplo:
 > ${usedPrefix + command} shakira
-╰─☄︎──────────────☄︎─╯
+> ╰─☄︎──────────────☄︎─╯
 `.trim())
   }
 
   try {
-    await conn.sendMessage(m.chat, { react: { text: "❀", key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: "🕒", key: m.key } })
 
     const searchApi = `https://delirius-apiofc.vercel.app/search/ytsearch?q=${text}`;
     const searchResponse = await fetch(searchApi);
@@ -25,19 +25,19 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
     const video = searchData.data[0]; // Primer resultado
     const { title, author, duration, views, publishedAt, url, image } = video
 
-    await conn.sendMessage(m.chat, { react: { text: "✦", key: m.key } })
+    await conn.sendMessage(m.chat, { react: { text: "🕛", key: m.key } })
 
     await conn.sendMessage(m.chat, {
       image: { url: image },
       caption: `
-╭─❒✦✿ *DETALLES DEL VIDEO* ✿✦❒─╮
+> ╭─❒✦✿ *DETALLES* ✿✦❒─╮
 > ✿ *Título:* ${title}
 > ❀ *Canal:* ${author.name}
 > ლ *Duración:* ${duration}
 > ✦ *Publicado:* ${publishedAt}
 > ❒ *Vistas:* ${formatViews(views)}
 > ☄︎ *Enlace:* ${url}
-╰─☄︎──────────────☄︎─╯
+> ╰─☄︎─────────────☄︎─╯
 
 > ❒✦ *Enviando audio...*
 `.trim()
@@ -50,7 +50,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
     const audioUrl = downloadData?.result?.download?.url;
     if (!audioUrl) {
       return m.reply(`
-✖︎ No se pudo obtener el audio del video.
+*✖︎ No se pudo obtener el audio del video.*
 > ლ Intenta con otro título o enlace.
 `.trim());
     }
