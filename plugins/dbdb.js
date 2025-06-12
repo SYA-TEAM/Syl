@@ -40,7 +40,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 > ☄︎ *Enlace:* ${url}
 > ╰─☄︎─────────────☄︎─╯
 
-> 🐦‍🔥 𝗔𝗴𝘂𝗮𝗿𝗱𝗮 𝘂𝗻 𝗺𝗼𝗺𝗲𝗻𝘁𝗼..`.trim()
+> 🟰 𝗔𝗴𝘂𝗮𝗿𝗱𝗮 𝘂𝗻 𝗺𝗼𝗺𝗲𝗻𝘁𝗼..`.trim()
     }, { quoted: m });
 
     const downloadApi = `https://api.vreden.my.id/api/ytmp3?url=${url}`;
